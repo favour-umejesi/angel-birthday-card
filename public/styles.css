@@ -113,7 +113,7 @@ h2 {
   margin-bottom: 2rem;
 }
 
-/* entrance: the card opens line by line, then Angel keeps floating */
+/* entrance: the greeting writes itself letter by letter, then Angel keeps floating */
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(18px); }
 }
@@ -123,15 +123,38 @@ h2 {
   to   { transform: translateY(-7px) rotate(-1.4deg); }
 }
 
+@keyframes letter-in {
+  from { opacity: 0; transform: translateY(0.45em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes letter-in-name {
+  from { opacity: 0; transform: translateY(0.5em) rotate(-8deg) scale(0.7); }
+  to   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+}
+
 .hero .eyebrow { animation: rise-in 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
-.headline      { animation: rise-in 0.7s 0.08s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
-.hero .sub     { animation: rise-in 0.7s 0.18s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
-.hero-actions  { animation: rise-in 0.7s 0.28s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
-.hero-art      { animation: rise-in 0.8s 0.35s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero .sub     { animation: rise-in 0.7s 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero-actions  { animation: rise-in 0.7s 0.65s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero-art      { animation: rise-in 0.8s 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+
+.headline .word { display: inline-block; white-space: nowrap; }
+
+.headline .ch {
+  display: inline-block;
+  opacity: 0;
+  animation: letter-in 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) calc(0.15s + var(--i) * 0.055s) both;
+}
+
+.headline em .ch {
+  animation-name: letter-in-name;
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.34, 1.4, 0.5, 1);
+}
 
 .headline em {
   display: inline-block;
-  animation: name-float 3.8s ease-in-out 1.1s infinite alternate;
+  animation: name-float 3.8s ease-in-out 2.2s infinite alternate;
 }
 
 .hero-actions {
