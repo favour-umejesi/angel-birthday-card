@@ -576,10 +576,42 @@ input[type="text"] {
 }
 
 @media (max-width: 600px) {
+  /* headline floor of 3rem overflows narrow phones; scale with viewport */
+  .headline { font-size: clamp(2.4rem, 10.5vw, 5.6rem); }
+  .eyebrow { font-size: 0.7rem; }
+  .hero { padding-top: 2.4rem; gap: 2.4rem; }
+  .hero-art { width: min(250px, 88%); }
+
+  /* smaller stamp on a 14px hole grid (140 and 182 are multiples of 14) */
+  .stamp-hero {
+    width: 140px;
+    height: 182px;
+    padding: 7px;
+    background-size: 14px 14px;
+    background-position: -7px -7px;
+  }
+  .stamp-hero .stamp-inner { padding: 0.8rem 0.5rem 0.7rem; }
+  .stamp-hero .stamp-word { font-size: 2.3rem; }
+  .stamp-top,
+  .stamp-bottom { font-size: 0.54rem; letter-spacing: 0.18em; }
+
+  /* photos become a swipeable filmstrip instead of a tall pile */
+  .snaps-row {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 16px 4px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .snap { flex: 0 0 74%; scroll-snap-align: center; }
+
   .wall { columns: 1; }
   .postcard { grid-template-columns: 1fr; }
-  .postcard-left { border-right: 0; border-bottom: 1px dashed var(--line); }
+  .postcard-left { border-right: 0; border-bottom: 1px dashed var(--line); padding: 1.8rem 1.3rem 1.3rem; }
+  .postcard-right { padding: 1.3rem 1.3rem 1.5rem; }
   .stamp-box { order: -1; align-self: flex-end; }
+  .postcard-right .btn { width: 100%; }
   .wishes-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
 }
 
