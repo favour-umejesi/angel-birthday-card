@@ -21,7 +21,7 @@ const DATA_FILE = path.join(DATA_DIR, 'wishes.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
 
-const LIMITS = { name: 40, location: 60, message: 500 };
+const LIMITS = { name: 40, location: 60, message: 1000 };
 const MAX_BODY = 10 * 1024;
 
 const MIME = {

@@ -9,7 +9,7 @@
 const { put, list, del } = require('@vercel/blob');
 const { randomUUID } = require('crypto');
 
-const LIMITS = { name: 40, location: 60, message: 500 };
+const LIMITS = { name: 40, location: 60, message: 1000 };
 
 function cleanField(value, max) {
   if (typeof value !== 'string') return '';
