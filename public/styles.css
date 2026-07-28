@@ -1,0 +1,589 @@
+/* ————————————————————————————————
+   Angel's birthday · Via Air Mail
+   A committed single-theme design: sun-warmed airmail paper,
+   postal red + air blue, handwritten wishes.
+   ———————————————————————————————— */
+
+:root {
+  --paper: #f7efdc;
+  --card: #fffcf1;
+  --ink: #22304c;
+  --ink-soft: #667190;
+  --red: #ce3a2a;
+  --red-deep: #b02f21;
+  --blue: #2a55a5;
+  --gold: #b9862f;
+  --line: rgba(34, 48, 76, 0.16);
+  --line-soft: rgba(34, 48, 76, 0.09);
+  --shadow: 0 1px 2px rgba(34, 48, 76, 0.06), 0 14px 34px -22px rgba(34, 48, 76, 0.45);
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-hand: "Caveat", "Segoe Script", cursive;
+  --font-ui: "Hanken Grotesk", -apple-system, "Segoe UI", sans-serif;
+  --stripe: repeating-linear-gradient(
+    -45deg,
+    var(--red) 0 14px,
+    var(--card) 14px 26px,
+    var(--blue) 26px 40px,
+    var(--card) 40px 52px
+  );
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1; }
+
+::selection { background: rgba(42, 85, 165, 0.22); }
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Airmail striped edges, top and bottom of the page */
+.airmail-edge {
+  height: 12px;
+  background: var(--stripe);
+  border-bottom: 1px solid var(--line);
+}
+body > .airmail-edge:last-of-type {
+  border-bottom: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* ———— Type ———— */
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.6rem;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 8vw, 5.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0.2rem 0 1.2rem;
+}
+
+.headline em {
+  font-style: italic;
+  color: var(--red);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+  line-height: 1.1;
+}
+
+/* ———— Hero ———— */
+
+.hero {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vh, 5.5rem) 1.5rem 3.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-text .sub {
+  max-width: 34rem;
+  color: var(--ink-soft);
+  margin-bottom: 2rem;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.hero-hint {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+/* ———— Buttons ———— */
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.8rem 1.6rem;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--red);
+  color: var(--card);
+  box-shadow: 0 10px 22px -12px rgba(206, 58, 42, 0.65);
+}
+.btn-primary:hover { background: var(--red-deep); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.6; cursor: default; transform: none; }
+.btn-primary.is-done { background: var(--blue); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--blue);
+  border-color: var(--blue);
+}
+.btn-ghost:hover { background: rgba(42, 85, 165, 0.08); }
+
+/* ———— Hero art: stamp + embroidered patch ———— */
+
+.hero-art {
+  position: relative;
+  justify-self: center;
+  width: min(320px, 100%);
+  aspect-ratio: 1;
+}
+
+/* Embroidered collectible patch (hero art, lower left) */
+.patch {
+  position: absolute;
+  left: -8%;
+  bottom: 0;
+  width: 64%;
+  transform: rotate(-4deg);
+  filter: drop-shadow(0 12px 22px rgba(34, 48, 76, 0.24));
+}
+
+.patch-name {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 34px;
+  fill: var(--red);
+}
+
+.patch-edition {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  fill: var(--ink-soft);
+}
+
+/* Perforated postage stamp (the little one on the form). Width and height
+   stay multiples of the 14px hole grid so the scallops line up. */
+.stamp {
+  width: 84px;
+  height: 112px;
+  padding: 7px;
+  background-image: radial-gradient(circle, transparent 0 4.5px, var(--card) 5px);
+  background-size: 14px 14px;
+  background-position: -7px -7px;
+  transform: rotate(-2.5deg);
+  filter: drop-shadow(0 4px 8px rgba(34, 48, 76, 0.18));
+}
+
+.stamp-inner {
+  height: 100%;
+  background: var(--blue);
+  border: 1px solid rgba(236, 217, 168, 0.55);
+  color: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stamp-word {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #ecd9a8;
+}
+
+/* Big version of the stamp, top right of the hero (18px hole grid) */
+.stamp-hero {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 180px;
+  height: 234px;
+  padding: 9px;
+  background-size: 18px 18px;
+  background-position: -9px -9px;
+  transform: rotate(3.5deg);
+  filter: drop-shadow(0 10px 18px rgba(34, 48, 76, 0.22));
+}
+
+.stamp-hero .stamp-inner {
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  padding: 1.1rem 0.6rem 1rem;
+  border-width: 1.5px;
+}
+
+.stamp-hero .stamp-word { font-size: 3rem; }
+
+.stamp-top,
+.stamp-bottom {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* ———— Snapshots of the birthday girl ———— */
+
+.snaps,
+.wishes,
+.write {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+.wishes-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.snaps-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.6rem;
+  padding-top: 0.4rem;
+}
+
+.snap {
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow);
+  padding: 10px 10px 0.55rem;
+  position: relative;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.snap:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 2px 4px rgba(34, 48, 76, 0.08), 0 20px 44px -24px rgba(34, 48, 76, 0.55);
+}
+
+/* masking-tape strip holding each snapshot down */
+.snap::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 78px;
+  height: 24px;
+  transform: translateX(-50%) rotate(var(--tilt, 0deg));
+  background: rgba(236, 217, 168, 0.75);
+  border: 1px solid rgba(185, 134, 47, 0.25);
+  box-shadow: 0 1px 2px rgba(34, 48, 76, 0.08);
+}
+
+.snap img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  filter: saturate(1.02);
+}
+
+.snap figcaption {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--ink);
+  padding: 0.45rem 0.2rem 0.15rem;
+  line-height: 1.15;
+}
+
+.count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  padding-bottom: 0.35rem;
+}
+
+.wall {
+  columns: 3;
+  column-gap: 1.4rem;
+}
+
+.wish {
+  break-inside: avoid;
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow);
+  margin: 0 0 1.4rem;
+  padding: 1.1rem 1.2rem 0.9rem;
+  position: relative;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wish:hover {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: 0 2px 4px rgba(34, 48, 76, 0.08), 0 18px 40px -22px rgba(34, 48, 76, 0.5);
+}
+
+.wish::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: var(--stripe);
+  opacity: 0.9;
+}
+
+.wish-stamp {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  width: 30px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--card);
+  border: 2px solid var(--card);
+  outline: 1px dashed rgba(34, 48, 76, 0.35);
+  transform: rotate(2deg);
+}
+.wish-stamp[data-tone="red"] { background: var(--red); }
+.wish-stamp[data-tone="blue"] { background: var(--blue); }
+.wish-stamp[data-tone="gold"] { background: var(--gold); }
+
+.wish-msg {
+  font-family: var(--font-hand);
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 1.3;
+  margin: 0.9rem 2.4rem 0.9rem 0;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.wish-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wish-from { color: var(--red-deep); }
+.wish-place { color: var(--ink-soft); text-align: right; }
+
+.wish-delete {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.wish-delete:hover { color: var(--red); }
+
+@keyframes settle {
+  from { opacity: 0; transform: rotate(var(--tilt, 0deg)) translateY(16px) scale(0.96); }
+  to   { opacity: 1; transform: rotate(var(--tilt, 0deg)) translateY(0) scale(1); }
+}
+.wish.is-new { animation: settle 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+
+.empty {
+  border: 1.5px dashed var(--line);
+  background: rgba(255, 252, 241, 0.55);
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+.empty-msg {
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.2rem;
+}
+
+/* ———— Write form: a big postcard ———— */
+
+.postcard {
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  position: relative;
+}
+
+.postcard::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 8px;
+  background: var(--stripe);
+}
+
+.postcard-left {
+  padding: 2.2rem 1.8rem 1.6rem;
+  border-right: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+}
+
+.postcard-right {
+  padding: 1.6rem 1.8rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.stamp-box {
+  align-self: flex-end;
+  border: 1.5px dashed var(--line);
+  padding: 8px;
+  margin-bottom: 0.2rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+textarea,
+input[type="text"] {
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  padding: 0.35rem 0.1rem;
+  transition: border-color 0.15s ease;
+}
+textarea:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-bottom-color: var(--blue);
+}
+
+textarea {
+  font-family: var(--font-hand);
+  font-size: 1.55rem;
+  font-weight: 500;
+  line-height: 1.35;
+  resize: vertical;
+  min-height: 9.5rem;
+  flex: 1;
+}
+
+input[type="text"] {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+::placeholder { color: rgba(102, 113, 144, 0.55); opacity: 1; }
+
+.counter {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.4rem;
+}
+
+.form-error {
+  color: var(--red-deep);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.postcard-right .btn { align-self: flex-start; margin-top: auto; }
+
+/* ———— Footer ———— */
+
+.foot {
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  padding: 2.5rem 1.5rem 2rem;
+}
+
+/* ———— Responsive ———— */
+
+@media (max-width: 900px) {
+  .wall { columns: 2; }
+  .snaps-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-art { width: min(280px, 80%); justify-self: start; margin-left: 0.5rem; }
+}
+
+@media (max-width: 600px) {
+  .wall { columns: 1; }
+  .postcard { grid-template-columns: 1fr; }
+  .postcard-left { border-right: 0; border-bottom: 1px dashed var(--line); }
+  .stamp-box { order: -1; align-self: flex-end; }
+  .wishes-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
