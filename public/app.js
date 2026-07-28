@@ -77,9 +77,9 @@
     wall.replaceChildren(...wishes.map(renderWish));
     empty.hidden = wishes.length > 0;
     count.textContent =
-      wishes.length === 0 ? 'Waiting for the first wish' :
+      wishes.length === 0 ? '' :
       wishes.length === 1 ? '1 wish so far' :
-      `${wishes.length} wishes and counting`;
+      `${wishes.length} wishes so far`;
     newestId = null;
   }
 
@@ -109,7 +109,7 @@
     };
     if (!payload.name || !payload.message) {
       errorEl.textContent = !payload.message
-        ? 'The wish itself is the important part. Write something!'
+        ? 'You forgot the wish part!'
         : 'Add your name so Angel knows who this is from.';
       errorEl.hidden = false;
       return;

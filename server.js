@@ -136,7 +136,7 @@ async function handleApi(req, res, url) {
       : '';
 
     if (!name) return sendJson(res, 400, { error: 'Add your name so Angel knows who this is from.' });
-    if (!message) return sendJson(res, 400, { error: 'The wish itself is the important part. Write something!' });
+    if (!message) return sendJson(res, 400, { error: 'You forgot the wish part!' });
 
     const wish = {
       id: crypto.randomUUID(),

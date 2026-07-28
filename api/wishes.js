@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
         : '';
 
       if (!name) return res.status(400).json({ error: 'Add your name so Angel knows who this is from.' });
-      if (!message) return res.status(400).json({ error: 'The wish itself is the important part. Write something!' });
+      if (!message) return res.status(400).json({ error: 'You forgot the wish part!' });
 
       const wish = { id: randomUUID(), name, location, message, createdAt: new Date().toISOString() };
       await put(`wishes/${wish.id}.json`, JSON.stringify(wish), {

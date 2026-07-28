@@ -57,11 +57,6 @@ main { flex: 1; }
 .airmail-edge {
   height: 12px;
   background: var(--stripe);
-  border-bottom: 1px solid var(--line);
-}
-body > .airmail-edge:last-of-type {
-  border-bottom: 0;
-  border-top: 1px solid var(--line);
 }
 
 /* ———— Type ———— */
@@ -277,8 +272,7 @@ h2 {
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid var(--line);
-  padding-top: 1.6rem;
+  padding-top: 1rem;
   margin-bottom: 1.8rem;
 }
 
