@@ -45,6 +45,9 @@ body {
 
 main { flex: 1; }
 
+/* keep all page content above the drifting balloons */
+body > * { position: relative; z-index: 1; }
+
 ::selection { background: rgba(42, 85, 165, 0.22); }
 
 :focus-visible {
@@ -108,6 +111,27 @@ h2 {
   max-width: 34rem;
   color: var(--ink-soft);
   margin-bottom: 2rem;
+}
+
+/* entrance: the card opens line by line, then Angel keeps floating */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+}
+
+@keyframes name-float {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(-7px) rotate(-1.4deg); }
+}
+
+.hero .eyebrow { animation: rise-in 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.headline      { animation: rise-in 0.7s 0.08s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero .sub     { animation: rise-in 0.7s 0.18s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero-actions  { animation: rise-in 0.7s 0.28s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.hero-art      { animation: rise-in 0.8s 0.35s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+
+.headline em {
+  display: inline-block;
+  animation: name-float 3.8s ease-in-out 1.1s infinite alternate;
 }
 
 .hero-actions {
@@ -551,6 +575,68 @@ input[type="text"] {
 
 .postcard-right .btn { align-self: flex-start; margin-top: auto; }
 
+/* ———— Balloons drifting up behind the page ———— */
+
+.balloons {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.balloon {
+  position: absolute;
+  left: var(--x);
+  bottom: -160px;
+  animation: balloon-rise var(--d) linear var(--delay) infinite;
+}
+
+.balloon i {
+  display: block;
+  position: relative;
+  width: 44px;
+  height: 56px;
+  border-radius: 50% 50% 50% 50% / 46% 46% 58% 58%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.4) 0 14%, transparent 42%),
+    var(--tone);
+  opacity: 0.6;
+  animation: balloon-sway var(--sway) ease-in-out infinite alternate;
+}
+
+.balloon i::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  border: 5px solid transparent;
+  border-top: 7px solid var(--tone);
+  transform: translateX(-50%);
+}
+
+.balloon i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 26px;
+  height: 54px;
+  margin-top: 5px;
+  border-left: 1.5px solid rgba(34, 48, 76, 0.28);
+  border-radius: 0 0 0 60%;
+}
+
+@keyframes balloon-rise {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(-100vh - 340px)); }
+}
+
+@keyframes balloon-sway {
+  from { transform: translateX(-9px) rotate(-2.5deg); }
+  to   { transform: translateX(9px) rotate(2.5deg); }
+}
+
 /* ———— Footer ———— */
 
 .foot {
@@ -607,9 +693,14 @@ input[type="text"] {
   .stamp-box { order: -1; align-self: flex-end; }
   .postcard-right .btn { width: 100%; }
   .wishes-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+
+  /* fewer balloons on small screens */
+  .balloon:nth-child(2),
+  .balloon:nth-child(4) { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .balloons { display: none; }
 }
