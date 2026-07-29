@@ -147,5 +147,4 @@
   });
 
   load();
-  setInterval(load, 90_000); // new wishes appear without a refresh
 })();
