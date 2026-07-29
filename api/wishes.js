@@ -1,48 +1,70 @@
 /**
- * Vercel serverless API for the card. Wishes live in Vercel Blob storage,
- * one small JSON file per wish, so simultaneous posts never overwrite
- * each other.
+ * Vercel serverless API. Wishes live in the GitHub repo itself, as a single
+ * wishes.json on the `wishes-data` branch: one commit per wish, no storage
+ * tiers, and the whole card history is preserved in git.
  *
- * Requires a Blob store connected to the project (Storage tab in Vercel),
- * which sets BLOB_READ_WRITE_TOKEN automatically.
+ * Required env: GITHUB_TOKEN, a token with Contents read/write on this repo.
+ * Optional env: ADMIN_KEY, enables DELETE /api/wishes?id=... for cleanup.
  */
-const { put, list, del } = require('@vercel/blob');
 const { randomUUID } = require('crypto');
 
+const REPO = 'favour-umejesi/angel-birthday-card';
+const BRANCH = 'wishes-data';
+const FILE_URL = `https://api.github.com/repos/${REPO}/contents/wishes.json`;
 const LIMITS = { name: 40, location: 60, message: 1000 };
+
+function gh(url, init = {}) {
+  return fetch(url, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': 'angel-birthday-card',
+      ...(init.headers || {})
+    }
+  });
+}
+
+async function readStore() {
+  const res = await gh(`${FILE_URL}?ref=${BRANCH}`, { cache: 'no-store' });
+  if (res.status === 404) return { wishes: [], sha: null };
+  if (!res.ok) throw new Error(`GitHub read failed: ${res.status}`);
+  const data = await res.json();
+  const wishes = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+  return { wishes: Array.isArray(wishes) ? wishes : [], sha: data.sha };
+}
+
+function writeStore(wishes, sha, message) {
+  return gh(FILE_URL, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message,
+      branch: BRANCH,
+      sha: sha || undefined,
+      content: Buffer.from(JSON.stringify(wishes, null, 2) + '\n').toString('base64')
+    })
+  });
+}
 
 function cleanField(value, max) {
   if (typeof value !== 'string') return '';
   return value.replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
-async function loadWishes() {
-  const { blobs } = await list({ prefix: 'wishes/' });
-  const results = await Promise.all(
-    blobs.map(async blob => {
-      try {
-        const response = await fetch(blob.url);
-        return await response.json();
-      } catch {
-        return null;
-      }
-    })
-  );
-  return results
-    .filter(w => w && w.id && w.name && w.message)
-    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-}
-
 module.exports = async (req, res) => {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!process.env.GITHUB_TOKEN) {
     return res.status(500).json({
-      error: 'Storage is not connected yet. In Vercel, open the Storage tab and add a Blob store to this project.'
+      error: 'Storage is not connected yet. Add a GITHUB_TOKEN environment variable in Vercel and redeploy.'
     });
   }
 
   try {
     if (req.method === 'GET') {
-      return res.status(200).json({ wishes: await loadWishes() });
+      const { wishes } = await readStore();
+      wishes.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+      res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=120');
+      return res.status(200).json({ wishes });
     }
 
     if (req.method === 'POST') {
@@ -57,12 +79,19 @@ module.exports = async (req, res) => {
       if (!message) return res.status(400).json({ error: 'You forgot the wish part!' });
 
       const wish = { id: randomUUID(), name, location, message, createdAt: new Date().toISOString() };
-      await put(`wishes/${wish.id}.json`, JSON.stringify(wish), {
-        access: 'public',
-        addRandomSuffix: false,
-        contentType: 'application/json'
-      });
-      return res.status(201).json({ wish });
+
+      // Read-modify-write with retries: a concurrent post changes the file's
+      // sha and GitHub rejects ours, so we re-read and try again.
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { wishes, sha } = await readStore();
+        wishes.push(wish);
+        const put = await writeStore(wishes, sha, `wish ${wish.id}`);
+        if (put.ok) return res.status(201).json({ wish });
+        if (put.status !== 409 && put.status !== 422) {
+          throw new Error(`GitHub write failed: ${put.status}`);
+        }
+      }
+      return res.status(503).json({ error: 'The card is busy right now. Try again in a few seconds.' });
     }
 
     if (req.method === 'DELETE') {
@@ -71,11 +100,17 @@ module.exports = async (req, res) => {
         return res.status(403).json({ error: 'Not allowed.' });
       }
       const id = String(req.query.id || '');
-      if (!/^[a-z0-9-]+$/i.test(id)) return res.status(400).json({ error: 'Bad id.' });
-      const { blobs } = await list({ prefix: `wishes/${id}` });
-      if (!blobs.length) return res.status(404).json({ error: 'No such wish.' });
-      await del(blobs.map(b => b.url));
-      return res.status(200).json({ ok: true });
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { wishes, sha } = await readStore();
+        const remaining = wishes.filter(w => w.id !== id);
+        if (remaining.length === wishes.length) return res.status(404).json({ error: 'No such wish.' });
+        const put = await writeStore(remaining, sha, `remove wish ${id}`);
+        if (put.ok) return res.status(200).json({ ok: true });
+        if (put.status !== 409 && put.status !== 422) {
+          throw new Error(`GitHub write failed: ${put.status}`);
+        }
+      }
+      return res.status(503).json({ error: 'Busy, try again shortly.' });
     }
 
     return res.status(405).json({ error: 'Method not allowed.' });

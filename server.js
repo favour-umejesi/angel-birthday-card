@@ -75,6 +75,12 @@ function sendJson(res, status, payload) {
   res.end(body);
 }
 
+function clientIp(req) {
+  const fwd = req.headers['x-client-ip'] || req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return req.socket.remoteAddress || 'unknown';
+}
+
 // Light per-IP rate limit on posting: 5 wishes per minute.
 const postLog = new Map();
 function rateLimited(ip) {
@@ -119,8 +125,10 @@ async function handleApi(req, res, url) {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/wishes') {
-    const ip = req.socket.remoteAddress || 'unknown';
-    if (rateLimited(ip)) {
+    // Admin posts (used for seeding recovered wishes) skip the rate limit and
+    // may carry their original id and timestamp.
+    const isAdmin = Boolean(ADMIN_KEY) && req.headers['x-admin-key'] === ADMIN_KEY;
+    if (!isAdmin && rateLimited(clientIp(req))) {
       return sendJson(res, 429, { error: 'That is a lot of wishes at once. Wait a minute and try again.' });
     }
     let data;
@@ -139,14 +147,20 @@ async function handleApi(req, res, url) {
     if (!message) return sendJson(res, 400, { error: 'You forgot the wish part!' });
 
     const wish = {
-      id: crypto.randomUUID(),
+      id: isAdmin && typeof data.id === 'string' && /^[a-z0-9-]{8,64}$/i.test(data.id)
+        ? data.id
+        : crypto.randomUUID(),
       name,
       location,
       message,
-      createdAt: new Date().toISOString()
+      createdAt: isAdmin && typeof data.createdAt === 'string' && !isNaN(Date.parse(data.createdAt))
+        ? data.createdAt
+        : new Date().toISOString()
     };
-    wishes.push(wish);
-    await persist();
+    if (!wishes.some(w => w.id === wish.id)) {
+      wishes.push(wish);
+      await persist();
+    }
     return sendJson(res, 201, { wish });
   }
 
